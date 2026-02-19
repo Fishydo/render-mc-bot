@@ -16,7 +16,7 @@ app.listen(PORT, () => {
 
 // ======== SELF PING EVERY 5 MINUTES ========
 setInterval(() => {
-  const url = `http://localhost:${PORT}`
+  const url = `https://lcc-mc-bot.onrender.com/`
   http.get(url, (res) => {
     console.log('Self ping successful')
   }).on('error', (err) => {
