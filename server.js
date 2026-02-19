@@ -30,7 +30,7 @@ function createBot() {
   const bot = mineflayer.createBot({
     host: '144.76.72.157',
     port: 21515,
-    username: 'lcc-alive-bot'
+    username: 'lccalivebot'
   })
 
   bot.on('spawn', () => {
