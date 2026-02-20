@@ -23,53 +23,50 @@ setInterval(() => {
   }).on('error', (err) => {
     console.log('Ping failed:', err.message)
   })
-}, 300000)
+}, 300000) // every 5 minutes
 
 
 // ======== MINECRAFT BOT ========
-
 function createBot() {
   const bot = mineflayer.createBot({
     host: '144.76.72.157',
     port: 21515,
-    username: 'lccalivebot'
+    username: 'lccalivebot',
+    version: '1.12.2'
   })
 
-  let moveForward = true
   let afkInterval = null
 
   bot.on('spawn', () => {
     console.log('Bot joined server!')
 
-    // Register + Login
+    // Register + Login after short delay
     setTimeout(() => {
       bot.chat('/register keepalive keepalive')
       bot.chat('/login keepalive')
     }, 3000)
 
-    // ===== ANTI AFK SYSTEM =====
+    // ===== IMPROVED ANTI-AFK SYSTEM =====
     if (afkInterval) clearInterval(afkInterval)
 
     afkInterval = setInterval(() => {
-      if (moveForward) {
-        console.log('Moving forward 1 block')
-        bot.setControlState('forward', true)
+      // Randomize movements to look more natural
+      const actions = ['forward', 'back', 'left', 'right', 'jump']
+      const action = actions[Math.floor(Math.random() * actions.length)]
 
-        setTimeout(() => {
-          bot.setControlState('forward', false)
-        }, 1000) // ~1 block
+      console.log(`Performing anti-AFK action: ${action}`)
+      bot.setControlState(action, true)
 
-      } else {
-        console.log('Moving backward 1 block')
-        bot.setControlState('back', true)
+      // Stop movement after short time (0.5–1s)
+      setTimeout(() => {
+        bot.setControlState(action, false)
+      }, 500 + Math.random() * 500)
 
-        setTimeout(() => {
-          bot.setControlState('back', false)
-        }, 1000)
+      // Random chat occasionally to prevent idle
+      if (Math.random() < 0.1) {
+        bot.chat('.') // small dot to simulate activity
       }
-
-      moveForward = !moveForward
-    }, 300000) // every 5 minutes
+    }, 30000) // every 30 seconds (much safer than 5 minutes)
   })
 
 
@@ -80,14 +77,8 @@ function createBot() {
 
   bot.on('messagestr', (msg) => {
     const lower = msg.toLowerCase()
-
-    if (lower.includes('register')) {
-      bot.chat('/register keepalive keepalive')
-    }
-
-    if (lower.includes('login')) {
-      bot.chat('/login keepalive')
-    }
+    if (lower.includes('register')) bot.chat('/register keepalive keepalive')
+    if (lower.includes('login')) bot.chat('/login keepalive')
   })
 
 
